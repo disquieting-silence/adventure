@@ -2,6 +2,7 @@ module World where
 
 import Data.List
 import Control.Monad.State
+import Control.Monad.Writer
 
 data Room = R1 | R2 | R3 | R4 | R5 | R6 | R7 | R8 | R9 deriving (Show, Eq)
 
@@ -49,6 +50,8 @@ gameWorld = World
    [
      Transition R1 South R2
    ]
+
+type App a = WriterT String (StateT (World, PlayerState) IO) a
 
 playGame :: [Direction] -> State (World, PlayerState) GameOutcome
 playGame [] = do
