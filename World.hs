@@ -53,13 +53,14 @@ gameWorld = World
 
 type App a = WriterT String (StateT (World, PlayerState) IO) a
 
-playGame :: [Direction] -> App GameOutcome GameOutcome
+playGame :: [Direction] -> App GameOutcome 
 playGame [] = do
      (world, player) <- get
      return Lose
 playGame (d:ds) = do
      state <- get
      let (message, world, ps) = doMove state d
+     tell $ message ++ "\n"
      put (world, ps)
      playGame ds
 
