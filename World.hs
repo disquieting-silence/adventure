@@ -53,7 +53,7 @@ gameWorld = World
 
 type App a = WriterT String (StateT (World, PlayerState) IO) a
 
-playGame :: [Direction] -> State (World, PlayerState) GameOutcome
+playGame :: [Direction] -> App GameOutcome GameOutcome
 playGame [] = do
      (world, player) <- get
      return Lose
@@ -62,6 +62,10 @@ playGame (d:ds) = do
      let (message, world, ps) = doMove state d
      put (world, ps)
      playGame ds
+
+-- this is sort of running something.
+-- (runStateT $ runWriterT (playGame [South, South])) (gameWorld, (PlayerState R1))
+
 -- |
 -- Testing moving south from R1
 -- >>> move gameWorld R1 South
