@@ -12,6 +12,8 @@ data Direction = North | South | East | West deriving (Show, Eq)
 
 data Transition = Transition Room Direction Room deriving Show
 
+data PlayerState = PlayerState Room deriving Show
+
 data World = World {
   getRooms :: [RoomInfo],
   getTransitions :: [Transition]
@@ -25,6 +27,16 @@ move world current dir =
   let transitions = getTransitions world
       transition = find (matches current dir) transitions
   in fmap (\(Transition _ _ t) -> t) transition
+
+
+doMove :: (World, PlayerState) -> Direction -> (String, World, PlayerState)
+doMove (w, s@(PlayerState current)) dir =
+  let dest = move w current dir
+  in maybe 
+    ("Cannot move there", w, s)
+    (\newroom -> ("Moving ...", w, (PlayerState newroom)))
+     dest
+
 
 gameWorld = World 
    [
