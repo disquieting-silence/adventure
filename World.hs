@@ -59,6 +59,7 @@ playGame [] = do
      return Lose
 playGame (d:ds) = do
      state <- get
+     _line <- liftIO getLine 
      let (message, world, ps) = doMove state d
      tell $ message ++ "\n"
      put (world, ps)
