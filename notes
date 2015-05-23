@@ -1,0 +1,81 @@
+So, firstly, I need to have some rooms identified. Let's do a basic idea of how a room will work.
+
+Lounge Room
+Patio
+Front Door
+Kitchen
+Back Door
+
+Sequence of actions to solve:
+
+ - open door (in front door)
+ - S
+ - S
+ - E
+ - open door (at back door)
+
+You have won.
+
+If a door is not open, you cannot get past it. So how would you do this with a pattern.
+
+Reader
+
+
+Write
+
+State
+
+>>= 
+
+--
+
+data MyType MT = MT Int Bool Char Int deriving Show
+
+getAny :: (Random a) => State StdGen a
+getAny = do
+           g  <- get
+           (x, g') <- return $ random g
+           put g'
+           return x
+
+
+return: set the result value but left the state unchanged
+get : set the result value to the state and leave the state unchanged
+put: set the result value to () and set the state value
+
+State s a = s -> (a, s)
+
+get s = (s, s)
+put x s  = ((), x)
+
+module StateGame where
+
+import Control.Monad.State
+
+type GameValue = Int
+type GameState = (Bool, Int)
+
+playGame :: String -> State GameState GameValue
+playGame [] = do
+    (_, score) = get
+    return score
+
+playGame (x:xs) = do
+    (on, score) <- get
+    case x of 
+      'a' | on -> put (on, score+1)
+      'b' | on -> put (on, score - 1)
+      'c'      -> put (not on, score)
+      _         -> putt (on, score) 
+   playGame xs
+
+startState = (False, 0)
+
+main = print $ evalState (playGame "abcadff") startState
+
+----
+
+
+
+
+
