@@ -45,14 +45,14 @@ doMove (w, s@(PlayerState current)) dir =
 
 data Action = Move Direction deriving (Eq, Show)
 
-findAction :: String -> Maybe Action
-findAction "N" = Just (Move North)
-findAction "S" = Just (Move South)
-findAction "E" = Just (Move East)
-findAction "W" = Just (Move West)
-findAction _ = Nothing
+findAction :: String -> Either String Action
+findAction "N" = Right (Move North)
+findAction "S" = Right (Move South)
+findAction "E" = Right (Move East)
+findAction "W" = Right (Move West)
+findAction msg = Left msg
 
-getAction :: IO (Maybe Action)
+getAction :: IO (Either String Action)
 getAction = fmap findAction getLine
    
     
@@ -77,13 +77,20 @@ doAction turns (Move dir) = do
      put (world, ps)
      playGame (turns - 1)
 
+
+endTurn :: TurnsLeft -> String -> App GameOutcome
+endTurn turns msg = do
+     liftIO $ putStrLn ("I did not understand: " ++ msg)
+     playGame (turns - 1) 
+
+
 playGame :: TurnsLeft -> App GameOutcome 
 playGame 0 = return Lose
 playGame turns = do
      -- Read the action from the user input
      input <- liftIO getAction
-     -- 
-     maybe (playGame (turns - 1)) (doAction turns) input
+     -- If the instruction was understood, do the action, otherwise go again. 
+     either (endTurn turns) (doAction turns) input
 
 -- this is sort of running something.
 -- (runStateT $ runWriterT (playGame [South, South])) (gameWorld, (PlayerState R1))
