@@ -1,6 +1,7 @@
 module World where
 
 import Data.List
+import Control.Monad.State
 
 data Room = R1 | R2 | R3 | R4 | R5 | R6 | R7 | R8 | R9 deriving (Show, Eq)
 
@@ -13,6 +14,8 @@ data Direction = North | South | East | West deriving (Show, Eq)
 data Transition = Transition Room Direction Room deriving Show
 
 data PlayerState = PlayerState Room deriving Show
+
+data GameOutcome = Win | Lose deriving Show
 
 data World = World {
   getRooms :: [RoomInfo],
@@ -47,6 +50,15 @@ gameWorld = World
      Transition R1 South R2
    ]
 
+playGame :: [Direction] -> State (World, PlayerState) GameOutcome
+playGame [] = do
+     (world, player) <- get
+     return Lose
+playGame (d:ds) = do
+     state <- get
+     let (message, world, ps) = doMove state d
+     put (world, ps)
+     playGame ds
 -- |
 -- Testing moving south from R1
 -- >>> move gameWorld R1 South
