@@ -22,6 +22,7 @@ data World = World {
 matches :: Room -> Direction -> Transition -> Bool
 matches room dir (Transition troom tdir _) = room == troom && dir == tdir 
 
+
 move :: World -> Room -> Direction -> Maybe Room
 move world current dir =
   let transitions = getTransitions world
@@ -45,3 +46,8 @@ gameWorld = World
    [
      Transition R1 South R2
    ]
+
+-- |
+-- Testing moving south from R1
+-- >>> move gameWorld R1 South
+-- Just R2
