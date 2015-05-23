@@ -80,13 +80,23 @@ doAction turns (Move dir) = do
 
 endTurn :: TurnsLeft -> String -> App GameOutcome
 endTurn turns msg = do
-     liftIO $ putStrLn ("I did not understand: " ++ msg)
-     playGame (turns - 1) 
+     liftIO $ putStrLn ("I did not understand your command: \"" ++ msg ++ "\"")
+     playGame turns 
+
+
+--findDesc :: World -> Room -> Maybe RoomDesc
+
+startTurn :: TurnsLeft -> (World, PlayerState) -> String
+startTurn turns (w, (PlayerState current)) =
+    "Hello. You have " ++ (show turns) ++ " turn(s) remaining."
 
 
 playGame :: TurnsLeft -> App GameOutcome 
 playGame 0 = return Lose
 playGame turns = do
+     -- read the world state
+     state <- get
+     liftIO $ putStrLn (startTurn turns state)
      -- Read the action from the user input
      input <- liftIO getAction
      -- If the instruction was understood, do the action, otherwise go again. 
