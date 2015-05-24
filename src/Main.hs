@@ -42,7 +42,8 @@ gameWorld = World
 
 runGame :: TurnsLeft -> IO ()
 runGame turns = do 
-  (runStateT $ runWriterT (playGame turns)) (gameWorld, PlayerState R1)
+  ((result, log), (_, _)) <- (runStateT $ runWriterT (playGame turns)) (gameWorld, PlayerState R1)
+  putStrLn $ "Complete Story: \n" ++ log
   return ()
 
 
