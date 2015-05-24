@@ -39,14 +39,7 @@ endTurn turns msg = do
 
 startTurn :: TurnsLeft -> (World, PlayerState) -> [String]
 startTurn turns (w, (PlayerState current)) = 
-   let info = findInfo (getRooms w) current
-       description = maybe 
-        [ "I do not know where you are." ]
-        (\i -> 
-          let (RoomDesc desc) = getDesc i
-          in [ "You are in the " ++ desc ]
-        )
-        info
+   let description = getDetail (getRooms w) current
    in [ "You have " ++ (show turns) ++ " turn(s) remaining." ] ++ description ++ [ "What is your move?" ]
 
 

@@ -14,3 +14,13 @@ data RoomInfo = RoomInfo {
 
 findInfo :: [RoomInfo] -> Room -> Maybe RoomInfo
 findInfo rooms room = find (\(RoomInfo r d) -> r == room) rooms
+
+getDetailOf :: RoomInfo -> [String]
+getDetailOf info =
+  let (RoomDesc desc) = getDesc info
+  in ["You are in " ++ desc ++ "."]
+
+getDetail :: [RoomInfo] -> Room -> [String]
+getDetail rooms room =
+  let info = findInfo rooms room
+  in maybe ["I do not know where you are."] getDetailOf info
