@@ -26,6 +26,7 @@ doAction turns (Move dir) = do
      (world, (PlayerState current)) <- get
      let (message, newTransitions, ps) = doMove (getTransitions world) current dir
      tell $ message ++ "\n"
+     liftIO $ putStrLn $ "\n" ++ message
      put (World (getRooms world) newTransitions, PlayerState ps)
      playGame (turns - 1)
 
@@ -45,7 +46,7 @@ startTurn :: TurnsLeft -> (World, PlayerState) -> [String]
 startTurn turns (w, (PlayerState current)) = 
    let description = getDetail (getRooms w) current
        exits = getExits (getTransitions w) current
-   in  [""] ++ 
+   in  ["----------------------------------------------------------"] ++ 
        description ++
        [ (describeExits w current) ] ++ 
        ["\nYou have " ++ (show turns) ++ " turn(s) remaining. What is your move?\n" ]
