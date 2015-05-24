@@ -40,7 +40,7 @@ endTurn turns msg = do
 startTurn :: TurnsLeft -> (World, PlayerState) -> [String]
 startTurn turns (w, (PlayerState current)) = 
    let description = getDetail (getRooms w) current
-   in [ "You have " ++ (show turns) ++ " turn(s) remaining." ] ++ description ++ [ "What is your move?" ]
+   in  [""] ++ description ++ ["\nYou have " ++ (show turns) ++ " turn(s) remaining. What is your move?\n" ]
 
 
 playGame :: TurnsLeft -> App GameOutcome 
