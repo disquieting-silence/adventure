@@ -17,24 +17,7 @@ data World = World {
   getTransitions :: [Transition]
 } deriving Show
 
-matches :: Room -> Direction -> Transition -> Bool
-matches room dir (Transition troom tdir _) = room == troom && dir == tdir 
 
-
-move :: World -> Room -> Direction -> Maybe Room
-move world current dir =
-  let transitions = getTransitions world
-      transition = find (matches current dir) transitions
-  in fmap (\(Transition _ _ t) -> t) transition
-
-
-doMove :: (World, PlayerState) -> Direction -> (String, World, PlayerState)
-doMove (w, s@(PlayerState current)) dir =
-  let dest = move w current dir
-  in maybe 
-    ("Cannot move there", w, s)
-    (\newroom -> ("Moving ...", w, (PlayerState newroom)))
-     dest
 
 
     
@@ -46,10 +29,10 @@ type TurnsLeft = Int
 
 doAction :: TurnsLeft -> Action -> App GameOutcome
 doAction turns (Move dir) = do
-     state <- get
-     let (message, world, ps) = doMove state dir
+     (world, (PlayerState current)) <- get
+     let (message, newTransitions, ps) = doMove (getTransitions world) current dir
      tell $ message ++ "\n"
-     put (world, ps)
+     put (World (getRooms world) newTransitions, PlayerState ps)
      playGame (turns - 1)
 
 
