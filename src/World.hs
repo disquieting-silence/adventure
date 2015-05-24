@@ -6,8 +6,7 @@ import Control.Monad.Writer
 import Rooms
 import Actions
 import Direction
-
-data Transition = Transition Room Direction Room deriving Show
+import Movement
 
 data PlayerState = PlayerState Room deriving Show
 

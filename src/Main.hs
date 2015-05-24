@@ -4,6 +4,7 @@ import World
 import Rooms
 import Actions
 import Direction
+import Movement
 import Control.Monad.Writer
 import Control.Monad.State
 
