@@ -29,6 +29,10 @@ doAction turns (Move dir) = do
      liftIO $ putStrLn $ "\n" ++ message
      put (World (getRooms world) newTransitions, PlayerState ps)
      playGame (turns - 1)
+doAction turns Inventory = do
+     liftIO $ putStrLn "You have nothing in your inventory."
+     playGame (turns - 1)
+
 
 
 endTurn :: TurnsLeft -> String -> App GameOutcome
