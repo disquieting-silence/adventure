@@ -17,12 +17,6 @@ data World = World {
   getTransitions :: [Transition]
 } deriving Show
 
-
-
-
-    
-
-
 type App a = WriterT String (StateT (World, PlayerState) IO) a
 
 type TurnsLeft = Int
@@ -42,14 +36,10 @@ endTurn turns msg = do
      playGame turns 
 
 
-findInfo :: World -> Room -> Maybe RoomInfo
-findInfo w room = 
-     let rooms = getRooms w
-     in find (\(RoomInfo r d) -> r == room) rooms
 
 startTurn :: TurnsLeft -> (World, PlayerState) -> [String]
 startTurn turns (w, (PlayerState current)) = 
-   let info = findInfo w current
+   let info = findInfo (getRooms w) current
        description = maybe 
         [ "I do not know where you are." ]
         (\i -> 
