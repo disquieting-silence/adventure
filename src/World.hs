@@ -133,7 +133,7 @@ playGame 0 = return Lose
 playGame turns = do
      -- read the world state
      state <- get
-     liftIO $ putStrLn (Data.List.intercalate "\n" $ startTurn turns state)
+     liftIO $ putStrLn (Data.List.intercalate "\n\n" $ startTurn turns state)
      -- Read the action from the user input
      input <- liftIO getAction
      -- If the instruction was understood, do the action, otherwise go again. 
@@ -144,6 +144,10 @@ runGame :: TurnsLeft -> IO ()
 runGame turns = do 
   (runStateT $ runWriterT (playGame turns)) (gameWorld, PlayerState R1)
   return ()
+
+
+main :: IO ()
+main = runGame 10
 
 -- this is sort of running something.
 -- (runStateT $ runWriterT (playGame [South, South])) (gameWorld, (PlayerState R1))
