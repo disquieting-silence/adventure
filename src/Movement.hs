@@ -21,7 +21,7 @@ doMove :: [Transition] -> Room -> Direction -> (String, [Transition], Room)
 doMove transitions current dir =
   let dest = move transitions current dir
   in maybe 
-    ("Cannot move there", transitions, current)
-    (\newroom -> ("Moving ...", transitions, newroom))
+    ("You cannot move " ++ (show dir) ++ ".", transitions, current)
+    (\newroom -> ("Moving " ++ (show dir) ++ ".", transitions, newroom))
      dest
 
