@@ -5,6 +5,7 @@ import Rooms
 import Actions
 import Direction
 import Movement
+import Player
 import Control.Monad.Writer
 import Control.Monad.State
 
@@ -42,7 +43,7 @@ gameWorld = World
 
 runGame :: TurnsLeft -> IO ()
 runGame turns = do 
-  ((result, log), (_, _)) <- (runStateT $ runWriterT (playGame turns)) (gameWorld, PlayerState R1)
+  ((result, log), (_, _)) <- (runStateT $ runWriterT (playGame turns)) (gameWorld, PlayerState R1 [])
   let actions = lines log
       counter = take (length actions) [1..]
       steps = zipWith (\n msg -> (show n) ++ ". " ++ msg) counter actions

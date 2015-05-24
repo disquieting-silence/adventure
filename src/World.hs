@@ -7,8 +7,8 @@ import Rooms
 import Actions
 import Direction
 import Movement
-
-data PlayerState = PlayerState Room deriving Show
+import Item
+import Player
 
 data GameOutcome = Win | Lose deriving Show
 
@@ -23,11 +23,12 @@ type TurnsLeft = Int
 
 doAction :: TurnsLeft -> Action -> App GameOutcome
 doAction turns (Move dir) = do
-     (world, (PlayerState current)) <- get
-     let (message, newTransitions, ps) = doMove (getTransitions world) current dir
+     (world, player) <- get
+     let current = Player.getRoom player
+         (message, newTransitions, ps) = doMove (getTransitions world) current dir
      tell $ message ++ "\n"
      liftIO $ putStrLn $ "\n" ++ message
-     put (World (getRooms world) newTransitions, PlayerState ps)
+     put (World (getRooms world) newTransitions, updateRoom player ps)
      playGame (turns - 1)
 doAction turns Inventory = do
      liftIO $ putStrLn "You have nothing in your inventory."
@@ -47,8 +48,9 @@ describeExits w room =
    in if (null exits) then "There are no exits." else "There are exits to the: " ++ (Data.List.intercalate ", " (map show exits))
 
 startTurn :: TurnsLeft -> (World, PlayerState) -> [String]
-startTurn turns (w, (PlayerState current)) = 
-   let description = getDetail (getRooms w) current
+startTurn turns (w, player) = 
+   let current = Player.getRoom player
+       description = getDetail (getRooms w) current
        exits = getExits (getTransitions w) current
    in  ["----------------------------------------------------------"] ++ 
        description ++
