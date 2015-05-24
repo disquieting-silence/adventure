@@ -46,7 +46,7 @@ runGame turns = do
   let actions = lines log
       counter = take (length actions) [1..]
       steps = zipWith (\n msg -> (show n) ++ ". " ++ msg) counter actions
-  putStrLn $ "Complete Story: \n" ++ (unlines steps)
+  putStrLn $ "\nComplete Story: \n" ++ (unlines steps)
   return ()
 
 
