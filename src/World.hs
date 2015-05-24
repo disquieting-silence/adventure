@@ -146,9 +146,6 @@ runGame turns = do
   return ()
 
 
-main :: IO ()
-main = runGame 10
-
 -- this is sort of running something.
 -- (runStateT $ runWriterT (playGame [South, South])) (gameWorld, (PlayerState R1))
 
