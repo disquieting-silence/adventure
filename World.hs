@@ -84,11 +84,17 @@ endTurn turns msg = do
      playGame turns 
 
 
---findDesc :: World -> Room -> Maybe RoomDesc
+findDesc :: World -> Room -> Maybe RoomDesc
+findDesc w room = 
+     let rooms = getRooms w
+         info = find (\(RoomInfo r d) -> r == room) rooms
+     in fmap (\(RoomInfo _ d) -> d) info
 
-startTurn :: TurnsLeft -> (World, PlayerState) -> String
-startTurn turns (w, (PlayerState current)) =
-    "Hello. You have " ++ (show turns) ++ " turn(s) remaining."
+startTurn :: TurnsLeft -> (World, PlayerState) -> [String]
+startTurn turns (w, (PlayerState current)) = [
+   ("Hello. You have " ++ (show turns) ++ " turn(s) remaining."),
+   "Heelo "
+ ]
 
 
 playGame :: TurnsLeft -> App GameOutcome 
@@ -96,11 +102,17 @@ playGame 0 = return Lose
 playGame turns = do
      -- read the world state
      state <- get
-     liftIO $ putStrLn (startTurn turns state)
+     liftIO $ putStrLn (Data.List.intercalate "\n" $ startTurn turns state)
      -- Read the action from the user input
      input <- liftIO getAction
      -- If the instruction was understood, do the action, otherwise go again. 
      either (endTurn turns) (doAction turns) input
+
+
+runGame :: TurnsLeft -> IO ()
+runGame turns = do 
+  (runStateT $ runWriterT (playGame turns)) (gameWorld, PlayerState R1)
+  return ()
 
 -- this is sort of running something.
 -- (runStateT $ runWriterT (playGame [South, South])) (gameWorld, (PlayerState R1))
