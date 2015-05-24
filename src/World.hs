@@ -36,11 +36,19 @@ endTurn turns msg = do
      playGame turns 
 
 
+describeExits :: World -> Room -> String
+describeExits w room = 
+   let exits = getExits (getTransitions w) room
+   in if (null exits) then "There are no exits." else "There are exits to the: " ++ (Data.List.intercalate ", " (map show exits))
 
 startTurn :: TurnsLeft -> (World, PlayerState) -> [String]
 startTurn turns (w, (PlayerState current)) = 
    let description = getDetail (getRooms w) current
-   in  [""] ++ description ++ ["\nYou have " ++ (show turns) ++ " turn(s) remaining. What is your move?\n" ]
+       exits = getExits (getTransitions w) current
+   in  [""] ++ 
+       description ++
+       [ (describeExits w current) ] ++ 
+       ["\nYou have " ++ (show turns) ++ " turn(s) remaining. What is your move?\n" ]
 
 
 playGame :: TurnsLeft -> App GameOutcome 

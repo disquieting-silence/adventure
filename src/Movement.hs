@@ -25,3 +25,7 @@ doMove transitions current dir =
     (\newroom -> ("Moving " ++ (show dir) ++ ".", transitions, newroom))
      dest
 
+getExits :: [Transition] -> Room -> [Direction]
+getExits transitions current = 
+  let moves = filter (\(Transition s _ _) -> s == current) transitions
+  in map (\(Transition _ dir _) -> dir) moves 
