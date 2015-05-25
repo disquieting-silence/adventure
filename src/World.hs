@@ -27,7 +27,8 @@ listItems :: [ItemInfo] -> [Item] -> String
 listItems _ [] = "You have nothing in your inventory."
 listItems infos items = 
      let found = mapMaybe (Item.findInfo infos) items
-     in Data.List.intercalate "\n" (map Item.showItem found)
+         itemDescs = map Item.showItem found
+     in Data.List.intercalate "\n -- " $ [ "Inventory: \n" ] ++ itemDescs
 
 doAction :: TurnsLeft -> Action -> App GameOutcome
 doAction turns (Move dir) = do
