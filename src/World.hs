@@ -14,7 +14,7 @@ data GameOutcome = Win | Lose deriving Show
 
 data World = World {
   getRooms :: [RoomInfo],
-  getItems :: [Item],
+  getItems :: [ItemInfo],
   getTransitions :: [Transition]
 } deriving Show
 

@@ -6,6 +6,7 @@ import Actions
 import Direction
 import Movement
 import Player
+import Item
 import Control.Monad.Writer
 import Control.Monad.State
 
@@ -22,7 +23,9 @@ gameWorld = World
      RoomInfo R9 (RoomName "Study") (RoomDesc "The room is very quiet.") 
    ]
    
-   []
+   [
+     ItemInfo ItemKey (ItemName "Key") R1 (ItemDesc "The key is oddly-shaped and blue.")
+   ]
 
    [
      Transition R1 South R2,
@@ -46,7 +49,7 @@ gameWorld = World
 
 runGame :: TurnsLeft -> IO ()
 runGame turns = do 
-  ((result, log), (_, _)) <- (runStateT $ runWriterT (playGame turns)) (gameWorld, PlayerState R1 [])
+  ((result, log), (_, _)) <- (runStateT $ runWriterT (playGame turns)) (gameWorld, PlayerState R1 [ ItemCrowbar ])
   let actions = lines log
       counter = take (length actions) [1..]
       steps = zipWith (\n msg -> (show n) ++ ". " ++ msg) counter actions
