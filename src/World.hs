@@ -1,6 +1,7 @@
 module World where
 
 import Data.List
+import Data.Maybe
 import Control.Monad.State
 import Control.Monad.Writer
 import Rooms
@@ -22,6 +23,12 @@ type App a = WriterT String (StateT (World, PlayerState) IO) a
 
 type TurnsLeft = Int
 
+listItems :: [ItemInfo] -> [Item] -> String
+listItems _ [] = "You have nothing in your inventory."
+listItems infos items = 
+     let found = mapMaybe (Item.findInfo infos) items
+     in Data.List.intercalate "\n" (map Item.showItem found)
+
 doAction :: TurnsLeft -> Action -> App GameOutcome
 doAction turns (Move dir) = do
      (world, player) <- get
@@ -32,7 +39,9 @@ doAction turns (Move dir) = do
      put (World (getRooms world) (World.getItems world) newTransitions, updateRoom player ps)
      playGame (turns - 1)
 doAction turns Inventory = do
-     liftIO $ putStrLn "\nYou have nothing in your inventory."
+     (world, player) <- get
+     let items = Player.getItems player
+     liftIO $ putStrLn $ "\n" ++ (listItems (World.getItems world) items)
      playGame (turns - 1)
 
 

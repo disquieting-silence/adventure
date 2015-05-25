@@ -24,7 +24,8 @@ gameWorld = World
    ]
    
    [
-     ItemInfo ItemKey (ItemName "Key") R1 (ItemDesc "The key is oddly-shaped and blue.")
+     ItemInfo ItemKey (ItemName "Key") (Just R1) (ItemDesc "The key is oddly-shaped and blue."),
+     ItemInfo ItemCrowbar (ItemName "Crowbar") Nothing (ItemDesc "The crowbar is lean and silver.")
    ]
 
    [
