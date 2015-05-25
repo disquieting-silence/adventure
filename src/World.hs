@@ -14,6 +14,7 @@ data GameOutcome = Win | Lose deriving Show
 
 data World = World {
   getRooms :: [RoomInfo],
+  getItems :: [Item],
   getTransitions :: [Transition]
 } deriving Show
 
@@ -28,10 +29,10 @@ doAction turns (Move dir) = do
          (message, newTransitions, ps) = doMove (getTransitions world) current dir
      tell $ message ++ "\n"
      liftIO $ putStrLn $ "\n" ++ message
-     put (World (getRooms world) newTransitions, updateRoom player ps)
+     put (World (getRooms world) (World.getItems world) newTransitions, updateRoom player ps)
      playGame (turns - 1)
 doAction turns Inventory = do
-     liftIO $ putStrLn "You have nothing in your inventory."
+     liftIO $ putStrLn "\nYou have nothing in your inventory."
      playGame (turns - 1)
 
 

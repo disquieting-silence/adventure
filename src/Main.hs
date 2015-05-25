@@ -21,6 +21,9 @@ gameWorld = World
      RoomInfo R8 (RoomName "Library") (RoomDesc "It would take a lifetime to read all of these books."),
      RoomInfo R9 (RoomName "Study") (RoomDesc "The room is very quiet.") 
    ]
+   
+   []
+
    [
      Transition R1 South R2,
      Transition R2 North R1,
