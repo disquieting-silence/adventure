@@ -53,6 +53,13 @@ endTurn turns msg = do
      playGame turns 
 
 
+describeRoomItems :: World -> Room -> String
+describeRoomItems w room =
+   let all = World.getItems w
+       inRoom = filter (\i -> maybe False (\r -> r == room) (Item.getRoom i)) all
+       inRoomDescs = map Item.showItem inRoom
+   in if (null inRoomDescs) then "" else ("You can see: " ++ (Data.List.intercalate ", " inRoomDescs))
+
 describeExits :: World -> Room -> String
 describeExits w room = 
    let exits = getExits (getTransitions w) room
@@ -63,8 +70,9 @@ startTurn turns (w, player) =
    let current = Player.getRoom player
        description = getDetail (getRooms w) current
        exits = getExits (getTransitions w) current
+       roomItems = describeRoomItems w current
    in  ["----------------------------------------------------------"] ++ 
-       description ++
+       description ++ [ roomItems ] ++
        [ (describeExits w current) ] ++ 
        ["\nYou have " ++ (show turns) ++ " turn(s) remaining. What is your move?\n" ]
 
