@@ -50,7 +50,7 @@ gameWorld = World
 
 runGame :: TurnsLeft -> IO ()
 runGame turns = do 
-  ((result, log), (_, _)) <- (runStateT $ runWriterT (playGame turns)) (gameWorld, PlayerState R1 [ ItemCrowbar, ItemKey ])
+  ((result, log), (_, _)) <- (runStateT $ runWriterT (playGame turns)) (gameWorld, PlayerState R2 [])
   let actions = lines log
       counter = take (length actions) [1..]
       steps = zipWith (\n msg -> (show n) ++ ". " ++ msg) counter actions

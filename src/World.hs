@@ -48,7 +48,24 @@ doAction turns Quit = playGame 0
 doAction turns (Pickup obj) = do
      (world, player) <- get
      let currentItems = itemsInRoom world (Player.getRoom player)
+         specItem = getItemByName currentItems obj
+     _ <- maybe (itemNotThere obj) (\i -> pickupItem i) specItem
      playGame (turns - 1)
+
+
+itemNotThere :: String -> App ()
+itemNotThere name = do
+     let message = "The item: " ++ name ++ " is not here."
+     tell message
+     liftIO $ putStrLn $ message
+
+
+pickupItem :: ItemInfo -> App ()
+pickupItem item = do
+     (world, player) <- get
+     let newItems = map (\i@(ItemInfo k n _ d) -> if (item == i) then (ItemInfo k n Nothing d) else i) (World.getItems world)
+     put ((World (getRooms world) newItems (getTransitions world)), player)
+
 
 
 endTurn :: TurnsLeft -> String -> App GameOutcome
