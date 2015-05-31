@@ -45,6 +45,10 @@ doAction turns Inventory = do
      liftIO $ putStrLn $ "\n" ++ (listItems (World.getItems world) items)
      playGame (turns - 1)
 doAction turns Quit = playGame 0
+doAction turns Pickup = do
+     (world, player) <- get
+     let currentItems = itemsInRoom world (Player.getRoom player)
+     playGame (turns - 1)
 
 
 endTurn :: TurnsLeft -> String -> App GameOutcome
@@ -53,10 +57,15 @@ endTurn turns msg = do
      playGame turns 
 
 
+itemsInRoom :: World -> Room -> [ItemInfo]
+itemsInRoom w room =
+   let all = World.getItems w
+   in filter (\i -> maybe False (\r -> r == room) (Item.getRoom i)) all 
+
+
 describeRoomItems :: World -> Room -> String
 describeRoomItems w room =
-   let all = World.getItems w
-       inRoom = filter (\i -> maybe False (\r -> r == room) (Item.getRoom i)) all
+   let inRoom = itemsInRoom w room
        inRoomDescs = map Item.showItem inRoom
    in if (null inRoomDescs) then "" else ("You can see: " ++ (Data.List.intercalate ", " inRoomDescs))
 
