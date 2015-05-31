@@ -20,3 +20,6 @@ findInfo items item = find (\(ItemInfo i _ _ _) -> i == item) items
 
 showItem :: ItemInfo -> String
 showItem (ItemInfo _ (ItemName name) _ _) = name
+
+getItemByName :: [ItemInfo] -> String -> Maybe ItemInfo
+getItemByName items name = find (\(ItemInfo _ (ItemName n) _ _) -> n == name) items

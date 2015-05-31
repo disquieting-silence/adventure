@@ -45,7 +45,7 @@ doAction turns Inventory = do
      liftIO $ putStrLn $ "\n" ++ (listItems (World.getItems world) items)
      playGame (turns - 1)
 doAction turns Quit = playGame 0
-doAction turns Pickup = do
+doAction turns (Pickup obj) = do
      (world, player) <- get
      let currentItems = itemsInRoom world (Player.getRoom player)
      playGame (turns - 1)
