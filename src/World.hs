@@ -61,10 +61,13 @@ itemNotThere name = do
 
 
 pickupItem :: ItemInfo -> App ()
-pickupItem item = do
+pickupItem item@(ItemInfo itemId _ _ _) = do
      (world, player) <- get
      let newItems = map (\i@(ItemInfo k n _ d) -> if (item == i) then (ItemInfo k n Nothing d) else i) (World.getItems world)
-     put ((World (getRooms world) newItems (getTransitions world)), player)
+         newWorld = World (getRooms world) newItems (getTransitions world)
+         newPlayerItems = itemId : (Player.getItems player)
+         newPlayer = PlayerState (Player.getRoom player) newPlayerItems
+     put ((World (getRooms world) newItems (getTransitions world)), newPlayer)
 
 
 
