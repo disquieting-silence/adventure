@@ -44,7 +44,7 @@ doAction turns Inventory = do
      let items = Player.getItems player
      liftIO $ putStrLn $ "\n" ++ (listItems (World.getItems world) items)
      playGame (turns - 1)
-
+doAction turns Quit = playGame 0
 
 
 endTurn :: TurnsLeft -> String -> App GameOutcome
