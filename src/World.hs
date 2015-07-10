@@ -68,6 +68,12 @@ itemNotThere name = do
      tell message
      liftIO $ putStrLn $ message
 
+itemNotInInventory :: String -> App ()
+itemNotInInventory name = do
+     let message = "The item: " ++ name ++ " is not in the inventory."
+     tell message
+     liftIO $ putStrLn $ message
+
 
 pickupItem :: ItemInfo -> App ()
 pickupItem item@(ItemInfo itemId _ _ _) = do
@@ -79,6 +85,10 @@ pickupItem item@(ItemInfo itemId _ _ _) = do
      put ((World (getRooms world) newItems (getTransitions world)), newPlayer)
 
 
+dropItem :: ItemInfo -> App ()
+dropItem item@(ItemInfo itemId _ _ _) = do
+     (world, player) <- get
+     let newItems = map (\i@(ItemInfo k n _ d) 
 
 endTurn :: TurnsLeft -> String -> App GameOutcome
 endTurn turns msg = do
