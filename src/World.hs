@@ -31,6 +31,7 @@ listItems infos items =
      in Data.List.intercalate "\n -- " $ [ "Inventory: \n" ] ++ itemDescs
 
 doAction :: TurnsLeft -> Action -> App GameOutcome
+-- Handle movement
 doAction turns (Move dir) = do
      (world, player) <- get
      let current = Player.getRoom player
@@ -39,19 +40,27 @@ doAction turns (Move dir) = do
      liftIO $ putStrLn $ "\n" ++ message
      put (World (getRooms world) (World.getItems world) newTransitions, updateRoom player ps)
      playGame (turns - 1)
+-- Handle listing inventory
 doAction turns Inventory = do
      (world, player) <- get
      let items = Player.getItems player
      liftIO $ putStrLn $ "\n" ++ (listItems (World.getItems world) items)
      playGame (turns - 1)
+-- Handle quitting game
 doAction turns Quit = playGame 0
+-- Handle picking up objects
 doAction turns (Pickup obj) = do
      (world, player) <- get
      let currentItems = itemsInRoom world (Player.getRoom player)
          specItem = getItemByName currentItems obj
      _ <- maybe (itemNotThere obj) (\i -> pickupItem i) specItem
      playGame (turns - 1)
-
+-- Handle dropping objects
+doAction turns (Drop obj) = do
+     let info = "Drop not implemented, sorry"
+     liftIO $ putStrLn $ "\n" ++ info
+     tell $ info ++ "\n" 
+     playGame (turns - 1)
 
 itemNotThere :: String -> App ()
 itemNotThere name = do
