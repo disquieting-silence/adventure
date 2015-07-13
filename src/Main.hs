@@ -59,4 +59,4 @@ runGame turns = do
 
 
 main :: IO ()
-main = runGame 2
+main = runGame 5
