@@ -262,3 +262,25 @@ testWorld = World
 -- Testing cache and find when it matches
 -- >>> cacheAndFind (\x -> x == 10) 10 (Nothing, [])
 -- (Just 10,[])
+
+-- |
+-- Testing cache and find when it doesn't match
+-- >>> cacheAndFind (\x -> x == "dog") "cat" (Nothing, [ "elephant" ])
+-- (Nothing,["cat","elephant"])
+
+-- |
+-- | Testing dropping item from player
+-- >>> dropItemFromPlayer ItemKey (PlayerState R1 [ItemCrowbar])
+-- PlayerState {getRoom = R1, getItems = [ItemCrowbar]}
+
+-- | Testing dropping item from player that they actually have
+-- >>> dropItemFromPlayer ItemKey (PlayerState R1 [ItemCrowbar, ItemKey])
+-- PlayerState {getRoom = R1, getItems = [ItemCrowbar]}
+
+-- | Testing dropping item from player that only has item
+-- >>> dropItemFromPlayer ItemKey (PlayerState R2 [ItemKey])
+-- PlayerState {getRoom = R2, getItems = []}
+
+-- | Testing dropping item from player that has no items
+-- >>> dropItemFromPlayer ItemKey (PlayerState R2 [])
+-- PlayerState {getRoom = R2, getItems = []}
