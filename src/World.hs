@@ -124,7 +124,13 @@ dropItemInRoom :: Room -> ItemInfo -> ItemInfo
 dropItemInRoom room (ItemInfo k n _ d) = ItemInfo k n (Just room) d
 
 cacheAndFind :: (a -> Bool) -> a -> (Maybe a, [a]) -> (Maybe a, [a])
-cacheAndFind pred x (ox, xs) = undefined
+cacheAndFind pred x (ox, xs) = 
+  -- the goal here is to find something in the list and store it, while filtering it out
+  -- this is going to be the fold function's operator
+  let include = pred x
+      list = if include then xs else x:xs
+      cached = maybe (if include then (Just x) else Nothing) (const ox) ox
+  in (cached, list)
 
 changeItemInWorld :: ItemInfo -> (ItemInfo -> ItemInfo) -> World -> World
 changeItemInWorld item f world = 
@@ -246,3 +252,13 @@ testWorld = World
 -- Testing items in inventory
 -- >>> itemsInInventory testWorld (PlayerState R1 [ ItemKey])
 -- [ItemInfo {getItem = ItemKey, getName = ItemName "Key", getRoom = Just R1, getDesc = ItemDesc "The key is oddly-shaped and blue."}]
+
+-- |
+-- Testing cache and find
+-- >>> cacheAndFind (\x -> x == 10) 5 (Nothing, [])
+-- (Nothing,[5])
+
+-- |
+-- Testing cache and find when it matches
+-- >>> cacheAndFind (\x -> x == 10) 10 (Nothing, [])
+-- (Just 10,[])
