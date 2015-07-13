@@ -62,10 +62,8 @@ doAction turns (Pickup obj) = do
 doAction turns (Drop obj) = do
      (world, player) <- get
      let items = itemsInInventory world player
-         specItem = getItemByName items
-     let info = "Drop not implemented, sorry"
-     liftIO $ putStrLn $ "\n" ++ info
-     tell $ info ++ "\n" 
+         specItem = getItemByName items obj
+     _ <- maybe (itemNotInInventory obj) dropItem specItem
      playGame (turns - 1)
 
 itemNotThere :: String -> App ()
@@ -164,9 +162,8 @@ itemsInInventory :: World -> PlayerState -> [ItemInfo]
 itemsInInventory w player =
    let current = Player.getItems player
    in mapMaybe (Item.findInfo (World.getItems w)) current 
---- HERE ...............................
--- ................
--- ..............
+
+
 describeRoomItems :: World -> Room -> String
 describeRoomItems w room =
    let inRoom = itemsInRoom w room
