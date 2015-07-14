@@ -2,6 +2,7 @@ module World where
 
 import Data.List
 import Data.Maybe
+import Data.Map(fromList)
 import Control.Monad.State
 import Control.Monad.Writer
 import Rooms
@@ -10,13 +11,14 @@ import Direction
 import Movement
 import Item
 import Player
+import Uses
 
 data GameOutcome = Win | Lose deriving Show
 
 data World = World {
   getRooms :: [RoomInfo],
   getItems :: [ItemInfo],
-  getTransitions :: [Transition]
+  getTransitions :: Transitions
 } deriving Show
 
 type App a = WriterT String (StateT (World, PlayerState) IO) a
@@ -218,24 +220,9 @@ testWorld = World
      ItemInfo ItemCrowbar (ItemName "Crowbar") Nothing (ItemDesc "The crowbar is lean and silver.")
    ]
 
-   [
-     Transition R1 South R2,
-     Transition R2 North R1,
-     Transition R2 East R5,
-     Transition R2 South R3,
-     Transition R3 East R6,
-     Transition R3 North R2,
-     Transition R4 South R5,
-     Transition R5 North R4,
-     Transition R5 West R2,
-     Transition R6 West R3,
-     Transition R6 East R9,
-     Transition R7 South R8,
-     Transition R8 North R7,
-     Transition R8 South R9,
-     Transition R9 North R8,
-     Transition R9 West R6
-   ]
+   (Data.Map.fromList [
+     ((R1, South), R2)
+   ])
 
 -- this is sort of running something.
 -- (runStateT $ runWriterT (playGame [South, South])) (gameWorld, (PlayerState R1))

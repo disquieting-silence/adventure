@@ -3,21 +3,17 @@ module Movement where
 import Direction
 import Rooms
 import Data.List
+import Data.Map(Map,toList,lookup)
+import Data.Maybe
 
-data Transition = Transition Room Direction Room deriving Show
-
-
-matches :: Room -> Direction -> Transition -> Bool
-matches room dir (Transition troom tdir _) = room == troom && dir == tdir 
+type Transitions = Map (Room, Direction) Room
 
 
-move :: [Transition] -> Room -> Direction -> Maybe Room
+move :: Transitions -> Room -> Direction -> Maybe Room
 move transitions current dir =
-  let transition = find (matches current dir) transitions
-  in fmap (\(Transition _ _ t) -> t) transition
+  Data.Map.lookup (current, dir) transitions
 
-
-doMove :: [Transition] -> Room -> Direction -> (String, [Transition], Room)
+doMove :: Transitions -> Room -> Direction -> (String, Transitions, Room)
 doMove transitions current dir =
   let dest = move transitions current dir
   in maybe 
@@ -25,7 +21,5 @@ doMove transitions current dir =
     (\newroom -> ("Moving " ++ (show dir) ++ ".", transitions, newroom))
      dest
 
-getExits :: [Transition] -> Room -> [Direction]
-getExits transitions current = 
-  let moves = filter (\(Transition s _ _) -> s == current) transitions
-  in map (\(Transition _ dir _) -> dir) moves 
+getExits :: Transitions -> Room -> [Direction]
+getExits transitions current = foldr (\((r, d), _) b -> if r == current then d:b else b) [] (toList transitions) 

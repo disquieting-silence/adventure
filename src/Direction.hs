@@ -1,4 +1,4 @@
 module Direction where
 
 
-data Direction = North | South | East | West deriving (Show, Eq)
+data Direction = North | South | East | West deriving (Show, Eq, Ord)
