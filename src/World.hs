@@ -28,13 +28,6 @@ type TurnsLeft = Int
 
 type StateChangers = (World -> World, PlayerState -> PlayerState)
 
-listItems :: ItemCollection -> [Item] -> String
-listItems _ [] = "You have nothing in your inventory."
-listItems infos items = 
-     let found = Data.Maybe.mapMaybe (Item.findInfo infos) items
-         itemDescs = Data.List.map Item.showItem found
-     in Data.List.intercalate "\n -- " $ [ "Inventory: \n" ] ++ itemDescs
-
 doAction :: TurnsLeft -> Action -> App GameOutcome
 -- Handle movement
 doAction turns (Move dir) = do
@@ -81,10 +74,6 @@ itemNotInInventory name = do
      liftIO $ putStrLn $ message
 
 
-pickupItemFromRoom :: ItemInfo -> ItemInfo
-pickupItemFromRoom (ItemInfo k n _ d) = ItemInfo k n Nothing d
-
-
 pickupUpdates :: ItemInfo -> StateChangers
 pickupUpdates item@(ItemInfo itemId _ _ _) = (changeItemInWorld item pickupItemFromRoom, addItemToPlayer itemId)
 
@@ -117,36 +106,10 @@ dropItem item@(ItemInfo itemId _ _ _) = do
      put newState
 
 
-changeItem :: ItemCollection -> ItemInfo -> (ItemInfo -> ItemInfo) -> ItemCollection
-changeItem items item f = Data.Map.map (\i -> if (item == i) then (f i) else i) items
-
-dropItemInRoom :: Room -> ItemInfo -> ItemInfo
-dropItemInRoom room (ItemInfo k n _ d) = ItemInfo k n (Just room) d
-
-cacheAndFind :: (a -> Bool) -> a -> (Maybe a, [a]) -> (Maybe a, [a])
-cacheAndFind pred x (ox, xs) = 
-  -- the goal here is to find something in the list and store it, while filtering it out
-  -- this is going to be the fold function's operator
-  let include = pred x
-      list = if include then xs else x:xs
-      cached = maybe (if include then (Just x) else Nothing) (const ox) ox
-  in (cached, list)
-
 changeItemInWorld :: ItemInfo -> (ItemInfo -> ItemInfo) -> World -> World
 changeItemInWorld item f world = 
   let newItems = changeItem (World.getItems world) item f
   in World (getRooms world) newItems (getTransitions world)
-
-
-addItemToPlayer :: Item -> PlayerState -> PlayerState
-addItemToPlayer itemId player = 
-  let newPlayerItems = itemId : (Player.getItems player)
-  in PlayerState (Player.getRoom player) newPlayerItems
-
-dropItemFromPlayer :: Item -> PlayerState -> PlayerState
-dropItemFromPlayer itemId player =
-  let (_, newItems) = foldr (cacheAndFind (== itemId)) (Nothing, []) (Player.getItems player)
-  in PlayerState (Player.getRoom player) newItems
 
 
 endTurn :: TurnsLeft -> String -> App GameOutcome
@@ -158,12 +121,13 @@ endTurn turns msg = do
 itemsInRoom :: World -> Room -> ItemCollection
 itemsInRoom w room =
    let all = World.getItems w
-   in Data.Map.filter (\i -> maybe False (\r -> r == room) (Item.getRoom i)) all 
+   in Data.Map.filter (itemInRoom room) all 
 
 itemsInInventory :: World -> PlayerState -> ItemCollection 
 itemsInInventory w player =
    let current = Player.getItems player
-   in toCollection $ Data.Maybe.mapMaybe (Item.findInfo (World.getItems w)) current 
+       allItems = World.getItems w
+   in toCollection $ Data.Maybe.mapMaybe (Item.findInfo allItems) current 
 
 
 describeRoomItems :: World -> Room -> String

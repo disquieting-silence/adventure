@@ -4,6 +4,7 @@ import Data.List
 import Data.Char
 import Rooms
 import Data.Map
+import Data.Maybe
 
 data Item = ItemKey | ItemCrowbar deriving (Show, Eq, Ord)
 
@@ -42,3 +43,23 @@ toCollection = Data.Map.fromList . (Data.List.map (\item@(ItemInfo k _ _ _ ) -> 
 
 hydrate :: [Item] -> ItemCollection -> ItemCollection
 hydrate keys collection = Data.Map.fromList (Data.List.foldr (\a b -> maybe b (\v -> (a,v):b) (Item.findInfo collection a)) [] keys)
+
+changeItem :: ItemCollection -> ItemInfo -> (ItemInfo -> ItemInfo) -> ItemCollection
+changeItem items item f = Data.Map.map (\i -> if (item == i) then (f i) else i) items
+
+pickupItemFromRoom :: ItemInfo -> ItemInfo
+pickupItemFromRoom (ItemInfo k n _ d) = ItemInfo k n Nothing d
+
+listItems :: ItemCollection -> [Item] -> String
+listItems _ [] = "You have nothing in your inventory."
+listItems infos items =
+     let found = Data.Maybe.mapMaybe (Item.findInfo infos) items
+         itemDescs = Data.List.map Item.showItem found
+     in Data.List.intercalate "\n -- " $ [ "Inventory: \n" ] ++ itemDescs
+
+dropItemInRoom :: Room -> ItemInfo -> ItemInfo
+dropItemInRoom room (ItemInfo k n _ d) = ItemInfo k n (Just room) d
+
+itemInRoom :: Room -> ItemInfo -> Bool
+itemInRoom room item = maybe False (\r -> r == room) (Item.getRoom item)
+
