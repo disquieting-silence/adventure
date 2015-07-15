@@ -199,7 +199,7 @@ testWorld = World
 -- |
 -- Testing items in inventory
 -- >>> itemsInInventory testWorld (PlayerState R1 [ ItemKey])
--- [ItemInfo {getItem = ItemKey, getName = ItemName "Key", getRoom = Just R1, getDesc = ItemDesc "The key is oddly-shaped and blue."}]
+-- fromList [(ItemKey,ItemInfo {getItem = ItemKey, getName = ItemName "Key", getRoom = Just R1, getDesc = ItemDesc "The key is oddly-shaped and blue."})]
 
 -- |
 -- Testing cache and find

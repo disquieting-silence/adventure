@@ -30,3 +30,8 @@ cacheAndFind pred x (ox, xs) =
       cached = maybe (if include then (Just x) else Nothing) (const ox) ox
   in (cached, list)
 
+-- |
+-- Testing moving south from R1
+-- -->>> move (World.getTransitions testWorld) R1 South
+-- Just R2
+
