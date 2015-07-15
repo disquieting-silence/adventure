@@ -2,7 +2,7 @@ module World where
 
 import Data.List
 import Data.Maybe
-import Data.Map(fromList)
+import Data.Map(fromList, elems, filter, map, mapMaybe)
 import Control.Monad.State
 import Control.Monad.Writer
 import Rooms
@@ -17,7 +17,7 @@ data GameOutcome = Win | Lose deriving Show
 
 data World = World {
   getRooms :: [RoomInfo],
-  getItems :: [ItemInfo],
+  getItems :: ItemCollection,
   getTransitions :: Transitions
 } deriving Show
 
@@ -28,11 +28,11 @@ type TurnsLeft = Int
 
 type StateChangers = (World -> World, PlayerState -> PlayerState)
 
-listItems :: [ItemInfo] -> [Item] -> String
+listItems :: ItemCollection -> [Item] -> String
 listItems _ [] = "You have nothing in your inventory."
 listItems infos items = 
-     let found = mapMaybe (Item.findInfo infos) items
-         itemDescs = map Item.showItem found
+     let found = Data.Maybe.mapMaybe (Item.findInfo infos) items
+         itemDescs = Data.List.map Item.showItem found
      in Data.List.intercalate "\n -- " $ [ "Inventory: \n" ] ++ itemDescs
 
 doAction :: TurnsLeft -> Action -> App GameOutcome
@@ -117,8 +117,8 @@ dropItem item@(ItemInfo itemId _ _ _) = do
      put newState
 
 
-changeItem :: [ItemInfo] -> ItemInfo -> (ItemInfo -> ItemInfo) -> [ItemInfo]
-changeItem items item f = map (\i -> if (item == i) then (f i) else i) items
+changeItem :: ItemCollection -> ItemInfo -> (ItemInfo -> ItemInfo) -> ItemCollection
+changeItem items item f = Data.Map.map (\i -> if (item == i) then (f i) else i) items
 
 dropItemInRoom :: Room -> ItemInfo -> ItemInfo
 dropItemInRoom room (ItemInfo k n _ d) = ItemInfo k n (Just room) d
@@ -155,27 +155,27 @@ endTurn turns msg = do
      playGame turns 
 
 
-itemsInRoom :: World -> Room -> [ItemInfo]
+itemsInRoom :: World -> Room -> ItemCollection
 itemsInRoom w room =
    let all = World.getItems w
-   in filter (\i -> maybe False (\r -> r == room) (Item.getRoom i)) all 
+   in Data.Map.filter (\i -> maybe False (\r -> r == room) (Item.getRoom i)) all 
 
-itemsInInventory :: World -> PlayerState -> [ItemInfo] 
+itemsInInventory :: World -> PlayerState -> ItemCollection 
 itemsInInventory w player =
    let current = Player.getItems player
-   in mapMaybe (Item.findInfo (World.getItems w)) current 
+   in toCollection $ Data.Maybe.mapMaybe (Item.findInfo (World.getItems w)) current 
 
 
 describeRoomItems :: World -> Room -> String
 describeRoomItems w room =
    let inRoom = itemsInRoom w room
-       inRoomDescs = map Item.showItem inRoom
+       inRoomDescs = Data.Map.elems $ Data.Map.map Item.showItem inRoom
    in if (null inRoomDescs) then "" else ("You can see: " ++ (Data.List.intercalate ", " inRoomDescs))
 
 describeExits :: World -> Room -> String
 describeExits w room = 
    let exits = getExits (getTransitions w) room
-   in if (null exits) then "There are no exits." else "There are exits to the: " ++ (Data.List.intercalate ", " (map show exits))
+   in if (null exits) then "There are no exits." else "There are exits to the: " ++ (Data.List.intercalate ", " (Data.List.map show exits))
 
 startTurn :: TurnsLeft -> (World, PlayerState) -> [String]
 startTurn turns (w, player) = 
@@ -215,10 +215,10 @@ testWorld = World
      RoomInfo R9 (RoomName "Study") (RoomDesc "The room is very quiet.") 
    ]
    
-   [
+   (Item.toCollection [
      ItemInfo ItemKey (ItemName "Key") (Just R1) (ItemDesc "The key is oddly-shaped and blue."),
      ItemInfo ItemCrowbar (ItemName "Crowbar") Nothing (ItemDesc "The crowbar is lean and silver.")
-   ]
+   ])
 
    (Data.Map.fromList [
      ((R1, South), R2)

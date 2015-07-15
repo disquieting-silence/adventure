@@ -24,10 +24,12 @@ gameWorld = World
      RoomInfo R9 (RoomName "Study") (RoomDesc "The room is very quiet.") 
    ]
    
-   [
-     ItemInfo ItemKey (ItemName "Key") (Just R1) (ItemDesc "The key is oddly-shaped and blue."),
-     ItemInfo ItemCrowbar (ItemName "Crowbar") Nothing (ItemDesc "The crowbar is lean and silver.")
-   ]
+   (Data.Map.fromList
+     [
+       (ItemKey, ItemInfo ItemKey (ItemName "Key") (Just R1) (ItemDesc "The key is oddly-shaped and blue.")),
+       (ItemCrowbar, ItemInfo ItemCrowbar (ItemName "Crowbar") Nothing (ItemDesc "The crowbar is lean and silver."))
+     ]
+   )
 
    (Data.Map.fromList [((R1, South), R2)])
 
