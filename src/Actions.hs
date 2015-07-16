@@ -4,13 +4,13 @@ import Direction
 import Data.Char
 import Data.List
 
-data Action = Move Direction | Inventory | Pickup String | Drop String | Quit deriving (Eq, Show)
+data Action = Move Direction | Inventory | Pickup String | Drop String | Use String | Quit deriving (Eq, Show)
 
 -- I need to create an association list of [ terms ] - builder
 
 type AdvancedList = [([String], String -> Action)]
 advanced :: AdvancedList
-advanced = [ (pickupVerbs, Pickup), (dropVerbs, Drop) ]
+advanced = [ (pickupVerbs, Pickup), (dropVerbs, Drop), (useVerbs, Use) ]
 
 findAdvanced :: String -> AdvancedList -> Maybe Action 
 findAdvanced input adv =
@@ -34,7 +34,9 @@ findAction action =
 
 pickupVerbs = [ "TAKE", "PICK UP" ]
 
-dropVerbs = [ "DROP" ]
+dropVerbs = [ "DROP", "PUT DOWN" ]
+
+useVerbs = [ "USE" ]
 
 getAction :: IO (Either String Action)
 getAction = fmap (findAction . map toUpper) getLine

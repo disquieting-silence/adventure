@@ -60,6 +60,9 @@ doAction turns (Drop obj) = do
          specItem = getItemByName items obj
      _ <- maybe (itemNotInInventory obj) dropItem specItem
      playGame (turns - 1)
+doAction turns (Use obj) = do
+     liftIO $ putStrLn "Not implemented, yet"
+     playGame turns
 
 itemNotThere :: String -> App ()
 itemNotThere name = do

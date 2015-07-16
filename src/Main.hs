@@ -33,7 +33,7 @@ gameWorld = World
 
    (Data.Map.fromList 
      [
-	((R1, South), R2),
+--	((R1, South), R2),
         ((R2, North), R1),
         ((R2, East), R5),
 	((R2, South), R3),
