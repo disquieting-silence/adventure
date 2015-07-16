@@ -13,12 +13,12 @@ move :: Transitions -> Room -> Direction -> Maybe Room
 move transitions current dir =
   Data.Map.lookup (current, dir) transitions
 
-doMove :: Transitions -> Room -> Direction -> (String, Transitions, Room)
+doMove :: Transitions -> Room -> Direction -> (String, Transitions, Room, Bool)
 doMove transitions current dir =
   let dest = move transitions current dir
   in maybe 
-    ("You cannot move " ++ (show dir) ++ ".", transitions, current)
-    (\newroom -> ("Moving " ++ (show dir) ++ ".", transitions, newroom))
+    ("You cannot move " ++ (show dir) ++ ".", transitions, current, False)
+    (\newroom -> ("Moving " ++ (show dir) ++ ".", transitions, newroom, True))
      dest
 
 getExits :: Transitions -> Room -> [Direction]

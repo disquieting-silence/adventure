@@ -31,7 +31,25 @@ gameWorld = World
      ]
    )
 
-   (Data.Map.fromList [((R1, South), R2)])
+   (Data.Map.fromList 
+     [
+	((R1, South), R2),
+        ((R2, North), R1),
+        ((R2, East), R5),
+	((R2, South), R3),
+	((R3, East), R6),
+	((R3, North), R2),
+	((R4, South), R5),
+	((R5, North), R4),
+	((R5, West), R2),
+	((R6, West), R3),
+	((R6, East), R9),
+	((R7, South), R8),
+	((R8, North), R7),
+	((R8, South), R9),
+	((R9, North), R8),
+	((R9, West), R6)
+     ])
 
 
 runGame :: TurnsLeft -> IO ()
@@ -45,4 +63,4 @@ runGame turns = do
 
 
 main :: IO ()
-main = runGame 5
+main = runGame 50

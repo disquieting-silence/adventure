@@ -33,11 +33,11 @@ doAction :: TurnsLeft -> Action -> App GameOutcome
 doAction turns (Move dir) = do
      (world, player) <- get
      let current = Player.getRoom player
-         (message, newTransitions, ps) = doMove (getTransitions world) current dir
+         (message, newTransitions, ps, usedTurn) = doMove (getTransitions world) current dir
      tell $ message ++ "\n"
      liftIO $ putStrLn $ "\n" ++ message
      put (World (getRooms world) (World.getItems world) newTransitions, updateRoom player ps)
-     playGame (turns - 1)
+     playGame (if usedTurn then turns - 1 else turns)
 -- Handle listing inventory
 doAction turns Inventory = do
      (world, player) <- get
