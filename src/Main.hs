@@ -1,5 +1,6 @@
 module Main where
 
+import Game
 import World
 import Rooms
 import Actions
