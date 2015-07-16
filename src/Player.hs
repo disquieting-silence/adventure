@@ -3,6 +3,8 @@ module Player where
 import Item
 import Rooms
 
+import Data.Map(fromList)
+
 data PlayerState = PlayerState {
   getRoom :: Room,
   getItems :: [Item] 
@@ -30,8 +32,9 @@ cacheAndFind pred x (ox, xs) =
       cached = maybe (if include then (Just x) else Nothing) (const ox) ox
   in (cached, list)
 
+
 -- |
--- Testing moving south from R1
--- -->>> move (World.getTransitions testWorld) R1 South
--- Just R2
+-- Testing add an item to a player
+-- >>> addItemToPlayer ItemKey (PlayerState {Player.getRoom = R1, getItems = []})
+-- PlayerState {getRoom = R1, getItems = [ItemKey]}
 
