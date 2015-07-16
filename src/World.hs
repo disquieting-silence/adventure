@@ -56,17 +56,18 @@ doAction turns (Pickup obj) = do
 -- Handle dropping objects
 doAction turns (Drop obj) = do
      (world, player) <- get
-     let items = itemsInInventory world player
-         specItem = getItemByName items obj
+     let specItem = getItemInInventory world player obj
      _ <- maybe (itemNotInInventory obj) dropItem specItem
      playGame (turns - 1)
 doAction turns (Use obj) = do
      (world, player) <- get
-     let items = itemsInInventory world player
-         specItem = getItemByName items obj
+     let specItem = getItemInInventory world player obj
      _ <- maybe (itemNotInInventory obj) useItem specItem
      playGame (turns - 1)
      
+
+getItemInInventory :: World -> PlayerState -> String -> Maybe ItemInfo
+getItemInInventory world player obj = getItemByName (itemsInInventory world player) obj
 
 itemNotThere :: String -> App ()
 itemNotThere name = do
