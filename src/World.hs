@@ -61,8 +61,12 @@ doAction turns (Drop obj) = do
      _ <- maybe (itemNotInInventory obj) dropItem specItem
      playGame (turns - 1)
 doAction turns (Use obj) = do
-     liftIO $ putStrLn "Not implemented, yet"
-     playGame turns
+     (world, player) <- get
+     let items = itemsInInventory world player
+         specItem = getItemByName items obj
+     _ <- maybe (itemNotInInventory) useItem specItem
+     playGame (turns - 1)
+     
 
 itemNotThere :: String -> App ()
 itemNotThere name = do
@@ -107,6 +111,12 @@ dropItem item@(ItemInfo itemId _ _ _) = do
      let newState = runUpdate (world, player) (dropUpdates item (Player.getRoom player))
      -- update the world items so that the item info is in the current room
      put newState
+
+
+useItem :: ItemInfo -> App()
+useItem item@(ItemInfo itemId _ _ _) = do
+	(world, player) <- get
+	// start here.:
 
 
 changeItemInWorld :: ItemInfo -> (ItemInfo -> ItemInfo) -> World -> World

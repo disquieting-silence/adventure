@@ -94,3 +94,10 @@ Firstly, let's try and rewrite the transitions so that they use maps. Instead of
 Firstly, let's try and rewrite the transitions so that they use maps. Instead of them being Room Direction Room, let's make them (Room, Direction) Room
 
 Done. Now, let's do the same thing with items.
+
+Now, it's time to start thinking about how usage will work. But before that, currently an invalid movement still counts as a turn. I need to change that. Done.
+
+Tasks:
+ - so somehow, 'use' key needs to add a transition, and possibly change the description of the room. Not sure about that one, though
+
+LATER: make pickup key and drop key appear in the complete story.
