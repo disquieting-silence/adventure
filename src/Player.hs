@@ -38,3 +38,13 @@ cacheAndFind pred x (ox, xs) =
 -- >>> addItemToPlayer ItemKey (PlayerState {Player.getRoom = R1, getItems = []})
 -- PlayerState {getRoom = R1, getItems = [ItemKey]}
 
+-- |
+-- Testing dropping an item for a player
+-- >>> dropItemFromPlayer ItemKey (PlayerState {Player.getRoom = R2, getItems = []})
+-- PlayerState {getRoom = R2, getItems = []}
+
+-- |
+-- Testing dropping an item for a player who has that item
+-- >>> dropItemFromPlayer ItemKey (PlayerState {Player.getRoom = R3, getItems = [ItemKey]})
+-- PlayerState {getRoom = R3, getItems = []}
+

@@ -79,5 +79,18 @@ main = print $ evalState (playGame "abcadff") startState
 This is going to get cumbersome, so let's try and get the reader/writer/state monads going.
 
 	
+Now it is time to see how difficult it would be 'use key'. What does use key need.
 
+- a room (/ state) that it works in
+- an item
+- the resultant state
 
+I want to use a key to open a door. It will need to add a transition. But how do I declare that the key does that?
+
+Usage Item ((World, Player) -> Maybe (World, Player))
+
+Firstly, let's try and rewrite the transitions so that they use maps. Instead of them being Room Direction Room, let's make them (Room, DirectionUsage Item ((World, Player) -> Maybe (World, Player))
+
+Firstly, let's try and rewrite the transitions so that they use maps. Instead of them being Room Direction Room, let's make them (Room, Direction) Room
+
+Done. Now, let's do the same thing with items.

@@ -1,0 +1,1 @@
+:l src/World.hs src/Rooms.hs src/Actions.hs src/Direction.hs src/Movement.hs src/Item.hs src/Player.hs src/Main.hs src/Uses.hs
