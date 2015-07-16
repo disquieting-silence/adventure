@@ -64,7 +64,7 @@ doAction turns (Use obj) = do
      (world, player) <- get
      let items = itemsInInventory world player
          specItem = getItemByName items obj
-     _ <- maybe (itemNotInInventory) useItem specItem
+     _ <- maybe (itemNotInInventory obj) useItem specItem
      playGame (turns - 1)
      
 
@@ -116,7 +116,8 @@ dropItem item@(ItemInfo itemId _ _ _) = do
 useItem :: ItemInfo -> App()
 useItem item@(ItemInfo itemId _ _ _) = do
 	(world, player) <- get
-	// start here.:
+	liftIO $ putStrLn ("Not implemented yet. Sorry.")
+	put (world, player)
 
 
 changeItemInWorld :: ItemInfo -> (ItemInfo -> ItemInfo) -> World -> World
