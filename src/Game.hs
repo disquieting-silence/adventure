@@ -106,8 +106,31 @@ dropItem item@(ItemInfo itemId _ _ _) = do
 useItem :: ItemInfo -> App()
 useItem item@(ItemInfo itemId _ _ _) = do
         (world, player) <- get
-        liftIO $ putStrLn ("Not implemented yet. Sorry.")
-        put (world, player)
+	let newState = runUpdate (world, player) (useUpdates item (Player.getRoom player))
+        put newState
+
+pickupUpdates :: ItemInfo -> StateChangers
+pickupUpdates item@(ItemInfo itemId _ _ _) = (changeItemInWorld item pickupItemFromRoom, addItemToPlayer itemId)
+
+
+--     let newWorld = changeItemInWorld item (drop2ddItemInRoom (Player.getRoom player)) world 
+--         newPlayer = dropItemFromPlayer itemId player
+dropUpdates :: ItemInfo -> Room -> StateChangers
+dropUpdates item@(ItemInfo itemId _ _ _) room = (changeItemInWorld item (dropItemInRoom room), dropItemFromPlayer itemId)
+
+
+useUpdates :: ItemInfo -> Room -> StateChangers
+useUpdates item@(ItemInfo itemId _ _ _) room =
+  let usage = Uses.lookupUsage itemId room
+  in maybe (id, id) id usage
+
+runUpdate :: (World, PlayerState) -> StateChangers -> (World, PlayerState)
+runUpdate (world, player) (fw, fp) =
+  let newWorld = fw world
+      newPlayer = fp player
+  in (newWorld, newPlayer)
+
+
 
 
 itemNotThere :: String -> App ()

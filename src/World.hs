@@ -11,7 +11,6 @@ import Direction
 import Movement
 import Item
 import Player
-import Uses
 
 data World = World {
   getRooms :: [RoomInfo],
@@ -20,27 +19,8 @@ data World = World {
 } deriving Show
 
 
-type StateChangers = (World -> World, PlayerState -> PlayerState)
-
 getItemInInventory :: World -> PlayerState -> String -> Maybe ItemInfo
 getItemInInventory world player obj = getItemByName (itemsInInventory world player) obj
-
-
-pickupUpdates :: ItemInfo -> StateChangers
-pickupUpdates item@(ItemInfo itemId _ _ _) = (changeItemInWorld item pickupItemFromRoom, addItemToPlayer itemId)
-
-
---     let newWorld = changeItemInWorld item (drop2ddItemInRoom (Player.getRoom player)) world 
---         newPlayer = dropItemFromPlayer itemId player
-dropUpdates :: ItemInfo -> Room -> StateChangers
-dropUpdates item@(ItemInfo itemId _ _ _) room = (changeItemInWorld item (dropItemInRoom room), dropItemFromPlayer itemId)
-
-
-runUpdate :: (World, PlayerState) -> StateChangers -> (World, PlayerState)
-runUpdate (world, player) (fw, fp) =
-  let newWorld = fw world
-      newPlayer = fp player
-  in (newWorld, newPlayer)
 
 
 
