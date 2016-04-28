@@ -1,3 +1,7 @@
+---
+title: this is a title
+---
+
 # Adventure
 
 * [Adventure's Transformer Engine](engine/index.html "Engine index")
