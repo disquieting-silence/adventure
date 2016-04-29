@@ -8,6 +8,7 @@
 module Rooms where
 
 import Data.List
+import Data.Map(Map, lookup)
 
 data Room = R1 | R2 | R3 | R4 | R5 | R6 | R7 | R8 | R9 deriving (Show, Eq, Ord)
 
@@ -48,10 +49,21 @@ class (SuccId k, SuccInfo i) => SuccGroup i k where
 class (SuccId k, SuccInfo i, SuccGroup i k) => SuccCollection c i k where
   succLookup :: c -> k -> Maybe i
 
+instance (Ord k, SuccId k, SuccInfo i, SuccGroup i k) => SuccCollection (Map k i) i k where
+  succLookup c k = Data.Map.lookup k c
+
 
 instance SuccId Room where
   klog :: Room -> [ String ]
   klog room = [ "Key" ]
+
+instance SuccInfo RoomInfo where
+  ilog :: RoomInfo -> [ String ]
+  ilog info = [ "Info" ]
+
+instance SuccGroup RoomInfo Room where
+  succKey :: RoomInfo -> Room
+  succKey = getRoom
 
 
 -- class GameId k => InfoOf k where
