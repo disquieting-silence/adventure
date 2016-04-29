@@ -1,5 +1,9 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE InstanceSigs #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE AllowAmbiguousTypes #-}
+{-# LANGUAGE FunctionalDependencies #-}
 
 module Rooms where
 
@@ -37,58 +41,33 @@ class Eq k => SuccId k where
 class SuccInfo i where
   ilog :: i -> [ String ]
 
-class (SuccId k, SuccInfo i) => SuccGroup i k where
+class (SuccId k, SuccInfo i) => SuccGroup i k | i -> k where
   succKey :: i -> k
 
-class (SuccId k, SuccInfo i, SuccGroup i k) => SuccCollection c i k where
+class (SuccId k, SuccInfo i, SuccGroup i k) => SuccCollection c i k | c -> i where
   succLookup :: c -> k -> Maybe i
 
 instance (Ord k, SuccId k, SuccInfo i, SuccGroup i k) => SuccCollection (Map k i) i k where
   succLookup c k = Data.Map.lookup k c
 
 instance (SuccId k, SuccInfo i, SuccGroup i k) => SuccCollection [i] i k where
-  succLookup c k = find (\i -> (succKey i) == k) c
+  succLookup :: [i] -> k -> Maybe i
+  succLookup c k = Data.List.find (\info -> (succKey info) == k) c
 
 
 instance SuccId Room where
   klog room = [ "Key" ]
 
 instance SuccInfo RoomInfo where
-  ilog info = [ "Info" ]
+  ilog info =
+    let (RoomName name) = getName info
+        (RoomDesc desc) = getDesc info
+    in ["You are in the " ++ name ++ ". " ++ desc]
 
 instance SuccGroup RoomInfo Room where
   succKey = getRoom
 
--- class GameId k => InfoOf k where
---   xGetKey ::
-
-newtype GameError = GameError String
-
-showError :: GameError -> [String]
-showError _ = [ "dog" ]
-
--- gGetDetail :: (GameInfo i, GameId k) => [i] -> k -> GameError -> [String]
--- gGetDetail infos key err =
---   let mInfo = find (\i -> (gGetKey i) == key) infos
---   in maybe (showError err) gLog mInfo
---
--- instance GameId Room
-
-
--- instance GameInfo RoomInfo where
---   gGetKey :: GameId k => RoomInfo -> k
---   gGetKey info = getRoom info
-
-findInfo :: [RoomInfo] -> Room -> Maybe RoomInfo
-findInfo rooms room = find (\info -> (getRoom info) == room) rooms
-
-getDetailOf :: RoomInfo -> [String]
-getDetailOf info =
-  let (RoomName name) = getName info
-      (RoomDesc desc) = getDesc info
-  in ["You are in the " ++ name ++ ". " ++ desc]
-
-getDetail :: [RoomInfo] -> Room -> [String]
+getDetail :: (SuccCollection c i k) => c -> k -> [String]
 getDetail rooms room =
-  let info = findInfo rooms room
-  in maybe ["I do not know where you are."] getDetailOf info
+  let info = succLookup rooms room
+  in maybe ["I do not know where you are."] ilog info
