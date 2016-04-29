@@ -1,9 +1,5 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE TypeSynonymInstances #-}
 {-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE InstanceSigs #-}
-
 
 module Rooms where
 
@@ -21,8 +17,6 @@ data RoomInfo = RoomInfo {
   getDesc :: RoomDesc
 } deriving Show
 
-class Eq raw => GameId raw
-
 {-
 Start small ... I want to create something which allows me to
 find something in a list of things where that thing has a mapping
@@ -37,7 +31,7 @@ in those constraining types
 
 -}
 
-class SuccId k where
+class Eq k => SuccId k where
   klog :: k -> [ String ]
 
 class SuccInfo i where
@@ -52,19 +46,18 @@ class (SuccId k, SuccInfo i, SuccGroup i k) => SuccCollection c i k where
 instance (Ord k, SuccId k, SuccInfo i, SuccGroup i k) => SuccCollection (Map k i) i k where
   succLookup c k = Data.Map.lookup k c
 
+instance (SuccId k, SuccInfo i, SuccGroup i k) => SuccCollection [i] i k where
+  succLookup c k = find (\i -> (succKey i) == k) c
+
 
 instance SuccId Room where
-  klog :: Room -> [ String ]
   klog room = [ "Key" ]
 
 instance SuccInfo RoomInfo where
-  ilog :: RoomInfo -> [ String ]
   ilog info = [ "Info" ]
 
 instance SuccGroup RoomInfo Room where
-  succKey :: RoomInfo -> Room
   succKey = getRoom
-
 
 -- class GameId k => InfoOf k where
 --   xGetKey ::
