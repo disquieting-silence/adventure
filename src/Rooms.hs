@@ -1,3 +1,10 @@
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE TypeSynonymInstances #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE InstanceSigs #-}
+
+
 module Rooms where
 
 import Data.List
@@ -13,6 +20,11 @@ data RoomInfo = RoomInfo {
   getDesc :: RoomDesc
 } deriving Show
 
+class DetailedInfo i k where
+  sfindInfo :: [i] -> k -> Maybe i
+  sgetDetailOf :: i -> [String]
+  sgetDetail :: [i] -> k -> [String]
+  stoString :: i -> [String]
 
 findInfo :: [RoomInfo] -> Room -> Maybe RoomInfo
 findInfo rooms room = find (\info -> (getRoom info) == room) rooms
