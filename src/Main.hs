@@ -12,7 +12,7 @@ import Control.Monad.Writer
 import Control.Monad.State
 import Data.Map
 
-gameWorld = World 
+gameWorld = World
    [
      RoomInfo R1 (RoomName "Kitchen") (RoomDesc "It is a small room with white walls. There is the faint odour of something rotten."),
      RoomInfo R2 (RoomName "Dining Room") (RoomDesc "The table has been prepared for a banquet of some kind."),
@@ -22,9 +22,9 @@ gameWorld = World
      RoomInfo R6 (RoomName "Foyer") (RoomDesc "There are portraits all over the walls."),
      RoomInfo R7 (RoomName "Greenhouse") (RoomDesc "The plants seem to be dying."),
      RoomInfo R8 (RoomName "Library") (RoomDesc "It would take a lifetime to read all of these books."),
-     RoomInfo R9 (RoomName "Study") (RoomDesc "The room is very quiet.") 
+     RoomInfo R9 (RoomName "Study") (RoomDesc "The room is very quiet.")
    ]
-   
+
    (Data.Map.fromList
      [
        (ItemKey, ItemInfo ItemKey (ItemName "Key") (Just R1) (ItemDesc "The key is oddly-shaped and blue.")),
@@ -32,7 +32,7 @@ gameWorld = World
      ]
    )
 
-   (Data.Map.fromList 
+   (Data.Map.fromList
      [
 --	((R1, South), R2),
         ((R2, North), R1),
@@ -54,7 +54,7 @@ gameWorld = World
 
 
 runGame :: TurnsLeft -> IO ()
-runGame turns = do 
+runGame turns = do
   ((result, log), (_, _)) <- (runStateT $ runWriterT (playGame turns)) (gameWorld, PlayerState R1 [])
   let actions = lines log
       counter = take (length actions) [1..]

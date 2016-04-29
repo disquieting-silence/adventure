@@ -1,11 +1,17 @@
-module Uses where
+{-# LANGUAGE TypeSynonymInstances #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE InstanceSigs #-}
 
+module Uses where
+  
 import Data.Map
 import Item
 import World
 import Player
 import Direction
 import Rooms
+import GameCollection
 
 -- the first driving use case of uses will be to use a 'key' which opens
 -- up a new transition. Before using the key, the pathway will not be open.
@@ -13,7 +19,7 @@ import Rooms
 -- But firstly, let's make a quit command. Done (was done already)
 
 openDoorFromR1ToR2 :: World -> World
-openDoorFromR1ToR2 world = 
+openDoorFromR1ToR2 world =
   let transitions = World.getTransitions world
       newTransitions = maybe (Data.Map.insert (R1, South) R2 transitions) (const transitions) (Data.Map.lookup (R1, South) transitions)
      -- newTransitions = transitions
@@ -29,3 +35,10 @@ roomUses = Data.Map.fromList
 
 lookupUsage :: Item -> Room -> Maybe (World -> World, PlayerState -> PlayerState)
 lookupUsage item room = Data.Map.lookup (item, room) roomUses
+
+type GameChanger = (World -> World, PlayerState -> PlayerState)
+type UsageCollection = Map (Item, Room) GameChanger
+
+instance GameCollection UsageCollection (Item, Room) GameChanger where
+  lookin :: UsageCollection -> (Item, Room) -> Maybe GameChanger
+  lookin c k = Data.Map.lookup k c
