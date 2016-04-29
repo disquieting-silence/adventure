@@ -20,37 +20,59 @@ data RoomInfo = RoomInfo {
   getDesc :: RoomDesc
 } deriving Show
 
-class Eq raw => GameId raw where
-  gDeref :: raw
+class Eq raw => GameId raw
 
-class GameInfo i where
-  gGetKey :: GameId k => i -> k
-  gLog :: i -> [String]
+{-
+Start small ... I want to create something which allows me to
+find something in a list of things where that thing has a mapping
+between one thing and another. I honestly think the only way I'll be
+able to do it is if I use a MultiParamTypeClasses extension
 
+Let's try that again. This time, keep the signatures to only the things
+that require both types ... use constraints for the types and put the signatures
+in those constraining types
+
+
+
+-}
+
+class SuccId k where
+  klog :: k -> [ String ]
+
+class SuccInfo i where
+  ilog :: i -> [ String ]
+
+class (SuccId k, SuccInfo i) => SuccGroup i k where
+  succKey :: i -> k
+
+class (SuccId k, SuccInfo i, SuccGroup i k) => SuccCollection c i k where
+  succLookup :: c -> k -> Maybe i
+
+
+instance SuccId Room where
+  klog :: Room -> [ String ]
+  klog room = [ "Key" ]
+
+
+-- class GameId k => InfoOf k where
+--   xGetKey ::
 
 newtype GameError = GameError String
 
 showError :: GameError -> [String]
 showError _ = [ "dog" ]
 
-gGetDetail :: (GameInfo i, GameId k) => [i] -> k -> GameError -> [String]
-gGetDetail infos key err =
-  let mInfo = find (\i -> (gGetKey i) == key) infos
-  in maybe (showError err) gLog mInfo
--- class Eq k => DetailedInfo i k e where
---   sfindInfo :: [i] -> k -> Maybe i
---   sfindInfo infos key = find (\info -> (sgetKey info) == key) infos
---   sgetKey :: i -> k
---   sgetDetailOf :: i -> [String]
---   sgetDetail :: [i] -> k -> e -> [String]
---   sgetDetail infos key err =
---     let info = sfindInfo infos key
---     in maybe (errMessage err) (\_ -> ["Cat"]) info
---   -- sgetDetail infos key =
---   --   let info = sfindInfo infos key
---   --   in maybe (errMessage key) sgetDetailOf info
---   stoString :: i -> [String]
---   errMessage :: e -> [String]
+-- gGetDetail :: (GameInfo i, GameId k) => [i] -> k -> GameError -> [String]
+-- gGetDetail infos key err =
+--   let mInfo = find (\i -> (gGetKey i) == key) infos
+--   in maybe (showError err) gLog mInfo
+--
+-- instance GameId Room
+
+
+-- instance GameInfo RoomInfo where
+--   gGetKey :: GameId k => RoomInfo -> k
+--   gGetKey info = getRoom info
 
 findInfo :: [RoomInfo] -> Room -> Maybe RoomInfo
 findInfo rooms room = find (\info -> (getRoom info) == room) rooms
