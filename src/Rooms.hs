@@ -9,6 +9,7 @@ module Rooms where
 
 import Data.List
 import Data.Map(Map, lookup)
+import GameCollection
 
 data Room = R1 | R2 | R3 | R4 | R5 | R6 | R7 | R8 | R9 deriving (Show, Eq, Ord)
 
@@ -21,53 +22,14 @@ data RoomInfo = RoomInfo {
   getDesc :: RoomDesc
 } deriving Show
 
-{-
-Start small ... I want to create something which allows me to
-find something in a list of things where that thing has a mapping
-between one thing and another. I honestly think the only way I'll be
-able to do it is if I use a MultiParamTypeClasses extension
+instance GameId Room where
+  idToStrings room = [ "Key" ]
 
-Let's try that again. This time, keep the signatures to only the things
-that require both types ... use constraints for the types and put the signatures
-in those constraining types
-
-
-
--}
-
-class Eq k => SuccId k where
-  klog :: k -> [ String ]
-
-class SuccInfo i where
-  ilog :: i -> [ String ]
-
-class (SuccId k, SuccInfo i) => SuccGroup i k | i -> k where
-  succKey :: i -> k
-
-class (SuccId k, SuccInfo i, SuccGroup i k) => SuccCollection c i k | c -> i where
-  succLookup :: c -> k -> Maybe i
-
-instance (Ord k, SuccId k, SuccInfo i, SuccGroup i k) => SuccCollection (Map k i) i k where
-  succLookup c k = Data.Map.lookup k c
-
-instance (SuccId k, SuccInfo i, SuccGroup i k) => SuccCollection [i] i k where
-  succLookup :: [i] -> k -> Maybe i
-  succLookup c k = Data.List.find (\info -> (succKey info) == k) c
-
-
-instance SuccId Room where
-  klog room = [ "Key" ]
-
-instance SuccInfo RoomInfo where
-  ilog info =
+instance GameInfo RoomInfo where
+  infoToStrings info =
     let (RoomName name) = getName info
         (RoomDesc desc) = getDesc info
     in ["You are in the " ++ name ++ ". " ++ desc]
 
-instance SuccGroup RoomInfo Room where
-  succKey = getRoom
-
-getDetail :: (SuccCollection c i k) => c -> k -> [String]
-getDetail rooms room =
-  let info = succLookup rooms room
-  in maybe ["I do not know where you are."] ilog info
+instance GameGroup RoomInfo Room where
+  toId = getRoom

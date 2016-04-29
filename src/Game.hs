@@ -13,13 +13,14 @@ import Item
 import Player
 import Uses
 import World
+import GameCollection
 
 type App a = WriterT String (StateT (World, PlayerState) IO) a
 data GameOutcome = Win | Lose deriving Show
- 
+
 type TurnsLeft = Int
- 
- 
+
+
 type StateChangers = (World -> World, PlayerState -> PlayerState)
 
 doAction :: TurnsLeft -> Action -> App GameOutcome
@@ -73,7 +74,7 @@ playGame turns = do
      liftIO $ putStrLn (Data.List.intercalate "\n\n" $ startTurn turns state)
      -- Read the action from the user input
      input <- liftIO getAction
-     -- If the instruction was understood, do the action, otherwise go again. 
+     -- If the instruction was understood, do the action, otherwise go again.
      either (endTurn turns) (doAction turns) input
 
 startTurn :: TurnsLeft -> (World, PlayerState) -> [String]
@@ -113,7 +114,7 @@ pickupUpdates :: ItemInfo -> StateChangers
 pickupUpdates item@(ItemInfo itemId _ _ _) = (changeItemInWorld item pickupItemFromRoom, addItemToPlayer itemId)
 
 
---     let newWorld = changeItemInWorld item (drop2ddItemInRoom (Player.getRoom player)) world 
+--     let newWorld = changeItemInWorld item (drop2ddItemInRoom (Player.getRoom player)) world
 --         newPlayer = dropItemFromPlayer itemId player
 dropUpdates :: ItemInfo -> Room -> StateChangers
 dropUpdates item@(ItemInfo itemId _ _ _) room = (changeItemInWorld item (dropItemInRoom room), dropItemFromPlayer itemId)
@@ -138,10 +139,9 @@ itemNotThere name = do
       let message = "The item: " ++ name ++ " is not here."
       tell message
       liftIO $ putStrLn $ message
- 
+
 itemNotInInventory :: String -> App ()
 itemNotInInventory name = do
       let message = "The item: " ++ name ++ " is not in the inventory."
       tell message
       liftIO $ putStrLn $ message
-
