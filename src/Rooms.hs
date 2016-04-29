@@ -20,8 +20,10 @@ data RoomInfo = RoomInfo {
   getDesc :: RoomDesc
 } deriving Show
 
-class DetailedInfo i k where
+class Eq k => DetailedInfo i k where
   sfindInfo :: [i] -> k -> Maybe i
+  sfindInfo infos key = find (\info -> (sgetKey info) == key) infos
+  sgetKey :: i -> k
   sgetDetailOf :: i -> [String]
   sgetDetail :: [i] -> k -> [String]
   stoString :: i -> [String]
