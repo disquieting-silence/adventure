@@ -6,7 +6,7 @@
 module Uses where
 
 import Data.Map
-import Item
+import Item.Item
 import World
 import Player
 import Direction

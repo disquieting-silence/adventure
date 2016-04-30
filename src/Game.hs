@@ -9,7 +9,7 @@ import Rooms
 import Actions
 import Direction
 import Movement
-import Item
+import Item.Item
 import Player
 import Uses
 import World

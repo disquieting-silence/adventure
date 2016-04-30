@@ -13,7 +13,7 @@ import GameCollection
 
 data Room = R1 | R2 | R3 | R4 | R5 | R6 | R7 | R8 | R9 deriving (Show, Eq, Ord)
 
-data RoomCatalog = RoomCatalog [RoomInfo] deriving Show
+newtype RoomCatalog = RoomCatalog [RoomInfo] deriving Show
 
 createRooms :: [RoomInfo] -> RoomCatalog
 createRooms rooms = RoomCatalog rooms

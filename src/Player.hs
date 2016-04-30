@@ -1,13 +1,13 @@
 module Player where
 
-import Item
+import Item.Item
 import Rooms
 
 import Data.Map(fromList)
 
 data PlayerState = PlayerState {
   getRoom :: Room,
-  getItems :: [Item] 
+  getItems :: [Item]
 } deriving Show
 
 updateRoom :: PlayerState -> Room -> PlayerState
@@ -47,4 +47,3 @@ cacheAndFind pred x (ox, xs) =
 -- Testing dropping an item for a player who has that item
 -- >>> dropItemFromPlayer ItemKey (PlayerState {Player.getRoom = R3, getItems = [ItemKey]})
 -- PlayerState {getRoom = R3, getItems = []}
-

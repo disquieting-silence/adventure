@@ -52,15 +52,16 @@ class GameInfo i where
 class (GameId k, GameInfo i) => GameGroup i k | i -> k where
   toId :: i -> k
 
-class (GameId k, GameInfo i, GameGroup i k) => GameCollection c i k | c -> i where
+class (GameId k, GameInfo i) => GameCollection c i k | c -> i where
   findFromId :: c -> k -> Maybe i
 
-instance (Ord k, GameId k, GameInfo i, GameGroup i k) => GameCollection (Map k i) i k where
-  findFromId c k = Data.Map.lookup k c
+-- instance (Ord k, GameId k, GameInfo i, GameGroup i k) => GameCollection (Map k i) i k where
+--   findFromId c k = Data.Map.lookup k c
 
-instance (GameId k, GameInfo i, GameGroup i k) => GameCollection [i] i k where
-  findFromId :: [i] -> k -> Maybe i
-  findFromId c k = Data.List.find (\info -> (toId info) == k) c
+-- Not necessary, but good to keep around to remind me how it works.
+-- instance (GameId k, GameInfo i, GameGroup i k) => GameCollection [i] i k where
+--   findFromId :: [i] -> k -> Maybe i
+--   findFromId c k = Data.List.find (\info -> (toId info) == k) c
 
 
 getDetail :: (GameCollection c i k) => c -> k -> [String]

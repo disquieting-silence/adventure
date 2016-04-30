@@ -7,7 +7,7 @@ import Actions
 import Direction
 import Movement
 import Player
-import Item
+import Item.Item
 import Control.Monad.Writer
 import Control.Monad.State
 import Data.Map
@@ -25,10 +25,10 @@ gameWorld = World
      RoomInfo R9 (RoomName "Study") (RoomDesc "The room is very quiet.")
    ])
 
-   (Data.Map.fromList
+   (createItems
      [
-       (ItemKey, ItemInfo ItemKey (ItemName "Key") (Just R1) (ItemDesc "The key is oddly-shaped and blue.")),
-       (ItemCrowbar, ItemInfo ItemCrowbar (ItemName "Crowbar") Nothing (ItemDesc "The crowbar is lean and silver."))
+       ItemInfo ItemKey (ItemName "Key") (Just R1) (ItemDesc "The key is oddly-shaped and blue."),
+       ItemInfo ItemCrowbar (ItemName "Crowbar") Nothing (ItemDesc "The crowbar is lean and silver.")
      ]
    )
 

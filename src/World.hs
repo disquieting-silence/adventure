@@ -9,12 +9,13 @@ import Rooms
 import Actions
 import Direction
 import Movement
-import Item
+import Item.Item
 import Player
+import GameCollection
 
 data World = World {
   getRooms :: RoomCatalog,
-  getItems :: ItemCollection,
+  getItems :: ItemCatalog,
   getTransitions :: Transitions
 } deriving Show
 
@@ -30,22 +31,23 @@ changeItemInWorld item f world =
   in World (getRooms world) newItems (getTransitions world)
 
 
-itemsInRoom :: World -> Room -> ItemCollection
+itemsInRoom :: World -> Room -> ItemCatalog
 itemsInRoom w room =
-   let all = World.getItems w
-   in Data.Map.filter (itemInRoom room) all
+   let inRoomPred = itemInRoom room
+       itemCatalog = World.getItems w
+   in filterItemsByInfoPred itemCatalog inRoomPred
 
-itemsInInventory :: World -> PlayerState -> ItemCollection
+itemsInInventory :: World -> PlayerState -> ItemCatalog
 itemsInInventory w player =
-   let current = Player.getItems player
-       allItems = World.getItems w
-   in toCollection $ Data.Maybe.mapMaybe (Item.findInfo allItems) current
+   let playerItems = Player.getItems player
+       itemCatalog = World.getItems w
+   in filterItemsById itemCatalog playerItems
 
 
 describeRoomItems :: World -> Room -> String
 describeRoomItems w room =
    let inRoom = itemsInRoom w room
-       inRoomDescs = Data.Map.elems $ Data.Map.map Item.showItem inRoom
+       inRoomDescs = Data.List.concat (mapItemInfos inRoom infoToStrings)
    in if (null inRoomDescs) then "" else ("You can see: " ++ (Data.List.intercalate ", " inRoomDescs))
 
 describeExits :: World -> Room -> String
@@ -68,7 +70,7 @@ testWorld = World
      RoomInfo R9 (RoomName "Study") (RoomDesc "The room is very quiet.")
    ])
 
-   (Item.toCollection [
+   (createItems [
      ItemInfo ItemKey (ItemName "Key") (Just R1) (ItemDesc "The key is oddly-shaped and blue."),
      ItemInfo ItemCrowbar (ItemName "Crowbar") Nothing (ItemDesc "The crowbar is lean and silver.")
    ])
@@ -88,7 +90,7 @@ testWorld = World
 -- |
 -- Testing items in inventory
 -- >>> itemsInInventory testWorld (PlayerState R1 [ ItemKey])
--- fromList [(ItemKey,ItemInfo {getItem = ItemKey, getName = ItemName "Key", getRoom = Just R1, getDesc = ItemDesc "The key is oddly-shaped and blue."})]
+-- ItemCatalog (fromList [(ItemKey,ItemInfo {getItem = ItemKey, getName = ItemName "Key", getRoom = Just R1, getDesc = ItemDesc "The key is oddly-shaped and blue."})])
 
 -- |
 -- Testing cache and find
