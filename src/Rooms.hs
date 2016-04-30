@@ -13,6 +13,11 @@ import GameCollection
 
 data Room = R1 | R2 | R3 | R4 | R5 | R6 | R7 | R8 | R9 deriving (Show, Eq, Ord)
 
+data RoomCatalog = RoomCatalog [RoomInfo] deriving Show
+
+createRooms :: [RoomInfo] -> RoomCatalog
+createRooms rooms = RoomCatalog rooms
+
 newtype RoomDesc = RoomDesc String deriving Show
 newtype RoomName = RoomName String deriving Show
 
@@ -33,3 +38,6 @@ instance GameInfo RoomInfo where
 
 instance GameGroup RoomInfo Room where
   toId = getRoom
+
+instance GameCollection RoomCatalog RoomInfo Room where
+  findFromId (RoomCatalog rooms) k = Data.List.find (\info -> (toId info) == k) rooms
